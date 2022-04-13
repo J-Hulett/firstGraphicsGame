@@ -1,5 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyEvent;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -17,8 +18,7 @@ public class Game extends Canvas implements Runnable{
     private BufferedImage image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
     private BufferedImage spriteSheet = null;
 
-    //temp
-    private BufferedImage player;
+    private Player p;
 
     public void init(){
         BufferedImageLoader loader = new BufferedImageLoader();
@@ -29,8 +29,9 @@ public class Game extends Canvas implements Runnable{
             e.printStackTrace();
         }
 
-        SpriteSheet ss = new SpriteSheet(spriteSheet);
-        player = ss.grabImage(1,1,32,32);
+        addKeyListener(new KeyInput(this));
+
+        p = new Player(200,200, this);
     }
 
     //Call this to start the game thread
@@ -95,7 +96,7 @@ public class Game extends Canvas implements Runnable{
     }
 
     private void tick(){
-
+        p.tick();
     }
 
     private void render(){
@@ -111,11 +112,32 @@ public class Game extends Canvas implements Runnable{
 
         g.drawImage(image, 0 ,0, getWidth(), getHeight(), this);
 
-        g.drawImage(player,100,100,this);
+        p.render(g);
 
         ///////////////////////////////////
         g.dispose();
         bs.show();
+
+    }
+
+
+    public void keyPressed(KeyEvent e){
+        int key = e.getKeyCode();
+
+        if(key == KeyEvent.VK_RIGHT){
+            p.setX(p.getX() + 5);
+        }else if(key == KeyEvent.VK_LEFT){
+            p.setX(p.getX() - 5);
+        }else if(key == KeyEvent.VK_DOWN){
+            p.setY(p.getY() + 5);
+        }else if(key == KeyEvent.VK_UP){
+            p.setY(p.getY() - 5);
+        }
+    }
+
+
+    public void keyReleased(KeyEvent e){
+        int key = e.getKeyCode();
 
     }
 
@@ -135,6 +157,10 @@ public class Game extends Canvas implements Runnable{
         frame.setVisible(true);
 
         game.start();
+    }
+
+    public BufferedImage getSpriteSheet(){
+        return spriteSheet;
     }
 
 }
