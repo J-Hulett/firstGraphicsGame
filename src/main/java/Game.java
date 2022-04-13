@@ -10,6 +10,7 @@ public class Game extends Canvas implements Runnable{
     public static final int WIDTH = 320;
     public static final int HEIGHT = WIDTH / 12 * 9;
     public static final int SCALE = 2;
+    public static final int SPRITE_SIZE = 32;
     public final String TITLE = "2D Space Game";
 
     private boolean running = false;
@@ -19,8 +20,10 @@ public class Game extends Canvas implements Runnable{
     private BufferedImage spriteSheet = null;
 
     private Player p;
+    private Controller c;
 
     public void init(){
+        requestFocus();
         BufferedImageLoader loader = new BufferedImageLoader();
         try{
             spriteSheet = loader.loadImage("Sprite_Sheet.png");
@@ -32,6 +35,7 @@ public class Game extends Canvas implements Runnable{
         addKeyListener(new KeyInput(this));
 
         p = new Player(200,200, this);
+        c = new Controller(this);
     }
 
     //Call this to start the game thread
@@ -97,6 +101,7 @@ public class Game extends Canvas implements Runnable{
 
     private void tick(){
         p.tick();
+        c.tick();
     }
 
     private void render(){
@@ -113,6 +118,7 @@ public class Game extends Canvas implements Runnable{
         g.drawImage(image, 0 ,0, getWidth(), getHeight(), this);
 
         p.render(g);
+        c.render(g);
 
         ///////////////////////////////////
         g.dispose();
@@ -125,19 +131,31 @@ public class Game extends Canvas implements Runnable{
         int key = e.getKeyCode();
 
         if(key == KeyEvent.VK_RIGHT){
-            p.setX(p.getX() + 5);
+            p.setVelX(5);
         }else if(key == KeyEvent.VK_LEFT){
-            p.setX(p.getX() - 5);
+            p.setVelX(-5);
         }else if(key == KeyEvent.VK_DOWN){
-            p.setY(p.getY() + 5);
+            p.setVelY(5);
         }else if(key == KeyEvent.VK_UP){
-            p.setY(p.getY() - 5);
+            p.setVelY(-5);
+        }else if(key == KeyEvent.VK_SPACE){
+            c.addBullet(new Bullet(p.getX(), p.getY(), this));
         }
     }
 
 
     public void keyReleased(KeyEvent e){
         int key = e.getKeyCode();
+
+        if(key == KeyEvent.VK_RIGHT){
+            p.setVelX(0);
+        }else if(key == KeyEvent.VK_LEFT){
+            p.setVelX(0);
+        }else if(key == KeyEvent.VK_DOWN){
+            p.setVelY(0);
+        }else if(key == KeyEvent.VK_UP){
+            p.setVelY(0);
+        }
 
     }
 
