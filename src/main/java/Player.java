@@ -1,7 +1,8 @@
-import java.awt.*;
-import java.awt.image.BufferedImage;
+import Entities.EntityA;
 
-public class Player {
+import java.awt.*;
+
+public class Player extends GameObject implements EntityA {
 
         private double x;
         private double y;
@@ -9,15 +10,11 @@ public class Player {
         private double velX = 0;
         private double velY = 0;
 
-        private BufferedImage player;
+        private Textures textures;
 
-        public Player (double x, double y, Game game){
-            this.x = x;
-            this.y = y;
-
-            SpriteSheet ss = new SpriteSheet(game.getSpriteSheet());
-
-            player = ss.grabImage(1,1,32,32);
+        public Player (double x, double y, Textures textures){
+            super(x, y);
+            this.textures = textures;
         }
 
         public void tick(){
@@ -39,8 +36,12 @@ public class Player {
         }
 
         public void render(Graphics g){
-            g.drawImage(player, (int)x, (int)y,null);
+            g.drawImage(textures.player, (int)x, (int)y,null);
         }
+
+    public Rectangle getBounds(){
+        return new Rectangle((int)x,(int)y, Game.SPRITE_SIZE, Game.SPRITE_SIZE);
+    }
 
     public double getX() {
         return x;

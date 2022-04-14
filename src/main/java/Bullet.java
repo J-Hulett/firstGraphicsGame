@@ -1,27 +1,41 @@
+import Entities.EntityA;
+
 import java.awt.*;
-import java.awt.image.BufferedImage;
 
-public class Bullet {
+public class Bullet extends GameObject implements EntityA {
 
-    private double x;
-    private double y;
+    private Textures textures;
+    private Game game;
 
-    BufferedImage image;
-
-    public Bullet(double x, double y, Game game){
-        this.x = x;
-        this.y = y;
-
-        SpriteSheet ss = new SpriteSheet(game.getSpriteSheet());
-
-        image = ss.grabImage(2,1, 32 ,32 );
+    public Bullet(double x, double y, Textures textures, Game game){
+        super(x, y);
+        this.textures = textures;
+        this.game = game;
     }
 
     public void tick(){
         y -= 10;
+
+        if(Physics.Collision(this, game.entityBList)){
+            System.out.println("COLLISION DETECTED");
+        }
     }
 
     public void render(Graphics g){
-        g.drawImage(image, (int) x, (int) y, null);
+        g.drawImage(textures.missile, (int) x, (int) y, null);
+    }
+
+    public Rectangle getBounds(){
+        return new Rectangle((int)x,(int)y, Game.SPRITE_SIZE, Game.SPRITE_SIZE);
+    }
+
+    @Override
+    public double getX() {
+        return x;
+    }
+
+    @Override
+    public double getY() {
+        return y;
     }
 }

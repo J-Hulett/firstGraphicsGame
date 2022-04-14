@@ -1,9 +1,13 @@
+import Entities.EntityA;
+import Entities.EntityB;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.LinkedList;
 
 public class Game extends Canvas implements Runnable{
 
@@ -18,24 +22,40 @@ public class Game extends Canvas implements Runnable{
 
     private BufferedImage image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
     private BufferedImage spriteSheet = null;
+    private BufferedImage background = null;
+
+    private boolean isShooting = false;
+    private int enemyCount = 1;
+    private int enemyKilled = 0;
 
     private Player p;
     private Controller c;
+    private Textures textures;
+
+    public LinkedList<EntityA> entityAList;
+    public LinkedList<EntityB> entityBList;
 
     public void init(){
         requestFocus();
         BufferedImageLoader loader = new BufferedImageLoader();
         try{
             spriteSheet = loader.loadImage("Sprite_Sheet.png");
-
+            background = loader.loadImage("background.png");
         }catch(IOException e){
             e.printStackTrace();
         }
 
         addKeyListener(new KeyInput(this));
 
-        p = new Player(200,200, this);
-        c = new Controller(this);
+        textures = new Textures(this);
+        p = new Player(200,200, textures);
+        c = new Controller(textures);
+
+        entityAList = c.getEntityAList();
+        entityBList = c.getEntityBList();
+
+
+        c.createEnemy(enemyCount);
     }
 
     //Call this to start the game thread
@@ -116,6 +136,7 @@ public class Game extends Canvas implements Runnable{
         //////Draw Stuff In Here///////////
 
         g.drawImage(image, 0 ,0, getWidth(), getHeight(), this);
+        g.drawImage(background, 0,0,null);
 
         p.render(g);
         c.render(g);
@@ -138,8 +159,9 @@ public class Game extends Canvas implements Runnable{
             p.setVelY(5);
         }else if(key == KeyEvent.VK_UP){
             p.setVelY(-5);
-        }else if(key == KeyEvent.VK_SPACE){
-            c.addBullet(new Bullet(p.getX(), p.getY(), this));
+        }else if(key == KeyEvent.VK_SPACE && !isShooting){
+            c.addEntity(new Bullet(p.getX(), p.getY(), textures, this));
+            isShooting = true;
         }
     }
 
@@ -155,6 +177,8 @@ public class Game extends Canvas implements Runnable{
             p.setVelY(0);
         }else if(key == KeyEvent.VK_UP){
             p.setVelY(0);
+        } else if(key == KeyEvent.VK_SPACE){
+            isShooting = false;
         }
 
     }
@@ -181,4 +205,19 @@ public class Game extends Canvas implements Runnable{
         return spriteSheet;
     }
 
+    public int getEnemyCount() {
+        return enemyCount;
+    }
+
+    public void setEnemyCount(int enemyCount) {
+        this.enemyCount = enemyCount;
+    }
+
+    public int getEnemyKilled() {
+        return enemyKilled;
+    }
+
+    public void setEnemyKilled(int enemyKilled) {
+        this.enemyKilled = enemyKilled;
+    }
 }
