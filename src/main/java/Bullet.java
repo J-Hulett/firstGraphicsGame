@@ -7,22 +7,23 @@ public class Bullet extends GameObject implements EntityA {
     private Textures textures;
     private Game game;
 
+    Animation animation;
+
     public Bullet(double x, double y, Textures textures, Game game){
         super(x, y);
         this.textures = textures;
         this.game = game;
+
+        animation = new Animation(5, textures.missile[0], textures.missile[1], textures.missile[2]);
     }
 
     public void tick(){
         y -= 10;
-
-        if(Physics.Collision(this, game.entityBList)){
-            System.out.println("COLLISION DETECTED");
-        }
+        animation.runAnimation();
     }
 
     public void render(Graphics g){
-        g.drawImage(textures.missile, (int) x, (int) y, null);
+        animation.drawAnimation(g,x,y,0);
     }
 
     public Rectangle getBounds(){

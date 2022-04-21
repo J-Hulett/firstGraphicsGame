@@ -1,3 +1,4 @@
+import Entities.EntityA;
 import Entities.EntityB;
 
 import java.awt.*;
@@ -7,13 +8,21 @@ public class Enemy extends GameObject implements EntityB {
 
         private Textures textures;
         Random r = new Random();
+        private Game game;
+        private Controller c;
 
         private int speed = r.nextInt(3) + 1;
 
+        Animation animation;
 
-        public Enemy(double x, double y, Textures textures){
+
+        public Enemy(double x, double y, Textures textures, Controller c, Game game){
             super(x, y);
             this.textures = textures;
+            this.game = game;
+            this.c = c;
+
+            animation = new Animation(5, textures.enemy[0], textures.enemy[1], textures.enemy[2]);
         }
 
         public void tick(){
@@ -24,10 +33,23 @@ public class Enemy extends GameObject implements EntityB {
                 y = -10;
                 x = r.nextInt(Game.WIDTH * Game.SCALE);
             }
+
+            for (int i = 0; i < game.entityAList.size(); i++) {
+                EntityA tempEntity = game.entityAList.get(i);
+                if(Physics.Collision(this, tempEntity)){
+                    c.removeEntity(tempEntity);
+                    c.removeEntity(this);
+                    game.setEnemyKilled(game.getEnemyKilled() + 1);
+                }
+            }
+
+
+
+            animation.runAnimation();
         }
 
         public void render(Graphics g){
-            g.drawImage(textures.enemy, (int)x, (int)y, null);
+            animation.drawAnimation(g,x,y,0);
         }
 
     public Rectangle getBounds(){

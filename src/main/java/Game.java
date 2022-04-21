@@ -31,9 +31,19 @@ public class Game extends Canvas implements Runnable{
     private Player p;
     private Controller c;
     private Textures textures;
+    private Menu menu;
 
     public LinkedList<EntityA> entityAList;
     public LinkedList<EntityB> entityBList;
+
+    public static int health = 200;
+
+    //Make a class to do this -- Don't use public static variables.
+    public static enum STATE{
+        MENU,
+        GAME
+    };
+    public static STATE state = STATE.MENU;
 
     public void init(){
         requestFocus();
@@ -46,10 +56,12 @@ public class Game extends Canvas implements Runnable{
         }
 
         addKeyListener(new KeyInput(this));
+        this.addMouseListener(new MouseInput());
 
         textures = new Textures(this);
-        p = new Player(200,200, textures);
-        c = new Controller(textures);
+        c = new Controller(textures, this);
+        p = new Player(200,200, textures, this, c);
+        menu = new Menu();
 
         entityAList = c.getEntityAList();
         entityBList = c.getEntityBList();
@@ -120,8 +132,16 @@ public class Game extends Canvas implements Runnable{
     }
 
     private void tick(){
-        p.tick();
-        c.tick();
+        if(state == STATE.GAME) {
+            p.tick();
+            c.tick();
+        }
+
+        if(enemyKilled >= enemyCount){
+            enemyCount += 2;
+            enemyKilled = 0;
+            c.createEnemy(enemyCount);
+        }
     }
 
     private void render(){
@@ -138,8 +158,21 @@ public class Game extends Canvas implements Runnable{
         g.drawImage(image, 0 ,0, getWidth(), getHeight(), this);
         g.drawImage(background, 0,0,null);
 
-        p.render(g);
-        c.render(g);
+        if(state == STATE.GAME) {
+            p.render(g);
+            c.render(g);
+
+            g.setColor(Color.gray);
+            g.fillRect(5,5,200,35);
+
+            g.setColor(Color.green);
+            g.fillRect(5,5,health,35);
+
+            g.setColor(Color.white);
+            g.drawRect(5,5,200,35);
+        } else if (state == STATE.MENU){
+            menu.render(g);
+        }
 
         ///////////////////////////////////
         g.dispose();
@@ -151,17 +184,19 @@ public class Game extends Canvas implements Runnable{
     public void keyPressed(KeyEvent e){
         int key = e.getKeyCode();
 
-        if(key == KeyEvent.VK_RIGHT){
-            p.setVelX(5);
-        }else if(key == KeyEvent.VK_LEFT){
-            p.setVelX(-5);
-        }else if(key == KeyEvent.VK_DOWN){
-            p.setVelY(5);
-        }else if(key == KeyEvent.VK_UP){
-            p.setVelY(-5);
-        }else if(key == KeyEvent.VK_SPACE && !isShooting){
-            c.addEntity(new Bullet(p.getX(), p.getY(), textures, this));
-            isShooting = true;
+        if(state == STATE.GAME) {
+            if (key == KeyEvent.VK_RIGHT) {
+                p.setVelX(5);
+            } else if (key == KeyEvent.VK_LEFT) {
+                p.setVelX(-5);
+            } else if (key == KeyEvent.VK_DOWN) {
+                p.setVelY(5);
+            } else if (key == KeyEvent.VK_UP) {
+                p.setVelY(-5);
+            } else if (key == KeyEvent.VK_SPACE && !isShooting) {
+                c.addEntity(new Bullet(p.getX(), p.getY(), textures, this));
+                isShooting = true;
+            }
         }
     }
 

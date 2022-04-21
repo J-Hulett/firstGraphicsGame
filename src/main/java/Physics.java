@@ -5,14 +5,17 @@ import java.util.LinkedList;
 
 public class Physics {
 
-    public static boolean Collision(EntityA entityA, LinkedList<EntityB> entityB){
-
-        for(int i = 0; i < entityB.size(); i++){
-
-            if(entityA.getBounds().intersects(entityB.get(i).getBounds())){
-                return true;
-            }
+    public static boolean Collision(EntityA entityA, EntityB entityB){
+        if(entityA.getBounds().intersects(entityB.getBounds())){
+            return true;
         }
-            return false;
+        return false;
     }
+    public static boolean Collision(EntityB entityB, EntityA entityA){
+        if(entityB.getBounds().intersects(entityA.getBounds())){
+            return true;
+        }
+        return false;
+    }
+
 }

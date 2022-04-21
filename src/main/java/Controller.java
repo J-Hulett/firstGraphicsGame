@@ -15,15 +15,16 @@ public class Controller {
 
     private Textures textures;
     Random r = new Random();
+    private Game game;
 
-    public Controller(Textures textures){
+    public Controller(Textures textures, Game game){
         this.textures = textures;
-
+        this.game = game;
     }
 
     public void createEnemy(int enemyCount){
         for(int i = 0; i < enemyCount; i++){
-           addEntity(new Enemy(r.nextInt((Game.WIDTH * Game.SCALE)), -10, textures));
+           addEntity(new Enemy(r.nextInt((Game.WIDTH * Game.SCALE)), -10, textures, this, game));
         }
     }
 
