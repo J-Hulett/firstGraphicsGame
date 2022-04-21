@@ -53,7 +53,7 @@ public class Enemy extends GameObject implements EntityB {
         }
 
     public Rectangle getBounds(){
-        return new Rectangle((int)x,(int)y, Game.SPRITE_SIZE, Game.SPRITE_SIZE);
+        return new Rectangle((int)x,(int)y, Game.SPRITE_SIZE - 12, Game.SPRITE_SIZE - 14);
     }
 
     @Override

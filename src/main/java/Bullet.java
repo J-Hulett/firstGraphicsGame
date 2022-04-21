@@ -27,7 +27,7 @@ public class Bullet extends GameObject implements EntityA {
     }
 
     public Rectangle getBounds(){
-        return new Rectangle((int)x,(int)y, Game.SPRITE_SIZE, Game.SPRITE_SIZE);
+        return new Rectangle((int)x,(int)y, Game.SPRITE_SIZE -15, Game.SPRITE_SIZE - 15);
     }
 
     @Override

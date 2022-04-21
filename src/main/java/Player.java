@@ -61,7 +61,7 @@ public class Player extends GameObject implements EntityA {
         }
 
     public Rectangle getBounds(){
-        return new Rectangle((int)x,(int)y, Game.SPRITE_SIZE, Game.SPRITE_SIZE);
+        return new Rectangle((int)x,(int)y, Game.SPRITE_SIZE -6, Game.SPRITE_SIZE - 6);
     }
 
     public double getX() {
