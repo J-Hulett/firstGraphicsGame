@@ -4,7 +4,8 @@ Space-Game
 
 BufferedImages, pixels, spritesheets, bufferstrategy
 
-Space ship - Shoots 3 different bullets and these bullets can be picked up
-5 different enemies.
-sprite sheet.
-generate white pixels for the stars.
+Space ship - Shoots Bullets - Basic collisions
+
+Overloaded Buffered image animation sheets, Enum based Menu.
+Key  and mouse input
+
